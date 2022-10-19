@@ -11,6 +11,12 @@ import java.util.function.UnaryOperator;
 
 import static edu.neu.coe.info6205.util.Utilities.formatWhole;
 
+//FIXED code
+import edu.neu.coe.info6205.sort.elementary.InsertionSort;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
 /**
  * This class implements a simple Benchmark utility for measuring the running time of algorithms.
  * It is part of the repository for the INFO6205 class, taught by Prof. Robin Hillyard
@@ -125,4 +131,71 @@ public class Benchmark_Timer<T> implements Benchmark<T> {
     private final Consumer<T> fPost;
 
     final static LazyLogger logger = new LazyLogger(Benchmark_Timer.class);
+
+    public static void main(String[] args) {
+        InsertionSort in_sort_obj = new InsertionSort();
+        Random rand_obj = new Random();
+
+        int[] lens={300,600,1200,2400,4800,9600,19200};
+        for (int j = 0; j < lens.length ; j++) {
+            
+            ArrayList<Integer> ordered_list = new ArrayList<>();
+            for (int i = 0; i < lens[j]; i++)
+                ordered_list.add(i + 1);
+
+            ArrayList<Integer> randomised_list = new ArrayList<>();
+            for (int i = 0; i < lens[j]; i++)
+                randomised_list.add(rand_obj.nextInt(lens[j]));
+            
+            ArrayList<Integer> reversed_list = new ArrayList<>();
+            for (int i = 0; i < lens[j]; i++)
+                reversed_list.add(lens[j] - i);
+
+            List<Integer> partially_ordered_list = new ArrayList<>();
+            for (int i = 0; i < lens[j]; i++)
+            {
+                if (i > lens[j] / 2) partially_ordered_list.add(rand_obj.nextInt(lens[j]));
+                 else partially_ordered_list.add(i);
+            }
+
+            Integer[] randomised_array = randomised_list.toArray(new Integer[0]);
+            Integer[] orderd_array = ordered_list.toArray(new Integer[0]);
+            Integer[] reversed_array = reversed_list.toArray(new Integer[0]);
+            Integer[] partially_ordered_array = partially_ordered_list.toArray(new Integer[0]);
+
+            int times=100;
+            //to warm up the PC
+            Benchmark<Boolean> bmRandom = new Benchmark_Timer<>(
+                    "Random Sort", b -> {
+                in_sort_obj.sort(randomised_array.clone(), 0, randomised_array.length);
+            });
+            double random_array_timing = bmRandom.run(true, times);
+
+            //to warm up the PC
+            Benchmark<Boolean> bmOrdered = new Benchmark_Timer<>(
+                    "Ordered Sort", b -> {
+                in_sort_obj.sort(orderd_array.clone(), 0, orderd_array.length);
+            });
+            double ordered_array_timing = bmOrdered.run(true, times);
+
+            //to warm up the PC
+            Benchmark<Boolean> bmReverse = new Benchmark_Timer<>(
+                    "Reverse Sort", b -> {
+                in_sort_obj.sort(reversed_array.clone(), 0, reversed_array.length);
+            });
+            double reversed_array_timing = bmReverse.run(true, times);
+
+            //to warm up the PC
+            Benchmark<Boolean> bmPartial = new Benchmark_Timer<>(
+                    "Partial Sort", b -> {
+                in_sort_obj.sort(partially_ordered_array.clone(), 0, partially_ordered_array.length);
+            });
+            double partial_array_timing = bmPartial.run(true, times);
+
+            System.out.println("\nRunning for length : "+lens[j]);
+            System.out.println("Random= \t"+random_array_timing + "\t Ordered= \t"+ordered_array_timing + "\t Reverse= \t"+reversed_array_timing + "\t Partial=\t"+partial_array_timing);
+
+        }
+    }
+
 }
