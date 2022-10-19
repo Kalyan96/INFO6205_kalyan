@@ -135,7 +135,6 @@ public class Benchmark_Timer<T> implements Benchmark<T> {
     public static void main(String[] args) {
         InsertionSort in_sort_obj = new InsertionSort();
         Random rand_obj = new Random();
-
         int[] lens={300,600,1200,2400,4800,9600,19200};
         for (int j = 0; j < lens.length ; j++) {
             
@@ -150,7 +149,6 @@ public class Benchmark_Timer<T> implements Benchmark<T> {
             ArrayList<Integer> reversed_list = new ArrayList<>();
             for (int i = 0; i < lens[j]; i++)
                 reversed_list.add(lens[j] - i);
-
             List<Integer> partially_ordered_list = new ArrayList<>();
             for (int i = 0; i < lens[j]; i++)
             {
@@ -158,11 +156,13 @@ public class Benchmark_Timer<T> implements Benchmark<T> {
                  else partially_ordered_list.add(i);
             }
 
+
+
+
             Integer[] randomised_array = randomised_list.toArray(new Integer[0]);
             Integer[] orderd_array = ordered_list.toArray(new Integer[0]);
             Integer[] reversed_array = reversed_list.toArray(new Integer[0]);
             Integer[] partially_ordered_array = partially_ordered_list.toArray(new Integer[0]);
-
             int times=100;
             //to warm up the PC
             Benchmark<Boolean> bmRandom = new Benchmark_Timer<>(
@@ -191,7 +191,6 @@ public class Benchmark_Timer<T> implements Benchmark<T> {
                 in_sort_obj.sort(partially_ordered_array.clone(), 0, partially_ordered_array.length);
             });
             double partial_array_timing = bmPartial.run(true, times);
-
             System.out.println("\nRunning for length : "+lens[j]);
             System.out.println("Random= \t"+random_array_timing + "\t Ordered= \t"+ordered_array_timing + "\t Reverse= \t"+reversed_array_timing + "\t Partial=\t"+partial_array_timing);
 
