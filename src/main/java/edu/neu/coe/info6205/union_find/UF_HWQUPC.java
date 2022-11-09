@@ -8,7 +8,7 @@
 package edu.neu.coe.info6205.union_find;
 
 import java.util.Arrays;
-
+import java.util.Random;
 /**
  * Height-weighted Quick Union with Path Compression
  */
@@ -82,6 +82,11 @@ public class UF_HWQUPC implements UF {
         validate(p);
         int root = p;
         // FIXME
+        while(root != parent[root])
+        {
+            if(pathCompression) doPathCompression(root);
+            root = parent[root];
+        }
         // END 
         return root;
     }
@@ -170,6 +175,21 @@ public class UF_HWQUPC implements UF {
 
     private void mergeComponents(int i, int j) {
         // FIXME make shorter root point to taller one
+        int a = find(i);
+        int b = find(j);
+
+        if(a == b) return;
+
+        if(height[a] < height[b])
+        {
+            updateParent(a, b);
+            updateHeight(b, a);
+        }
+        else
+        {
+            updateParent(b, a);
+            updateHeight(a, b);
+        }
         // END 
     }
 
@@ -178,6 +198,46 @@ public class UF_HWQUPC implements UF {
      */
     private void doPathCompression(int i) {
         // FIXME update parent to value of grandparent
+        parent[i] = parent[parent[i]];
         // END 
+    }
+
+    public static void main(String[] args){
+        int runs = 100;
+        int a = 0;
+        int sum =0;
+        int mean = 0;
+        double log_value = 0;
+        double log_coeff = 0;
+        int ii=0;
+        int jj=0;
+        int final_solution = 0;
+
+        for(int i = 1000; i <= 50000; i+=1000)
+        {
+            sum = 0;
+            for(int j = 0; j < runs; j++){
+                final_solution = 0;
+                Random random_number = new Random();
+                UF_HWQUPC uf_object = new UF_HWQUPC(i);
+                while(uf_object.count > 1)
+                {
+                    ii = random_number.nextInt(i);
+                    jj = random_number.nextInt(i);
+                    if(ii == jj) continue;
+
+                    if(!uf_object.connected(ii , jj))
+                        uf_object.union(ii, jj);
+                    final_solution+=1;
+                }
+                sum += final_solution;
+            }
+            mean = sum/runs;
+            log_value = Math.log(i) * i;
+            log_coeff += mean/log_value;
+            a+=1;
+            System.out.println("n " + i + " m " + mean+ " log_value "+ (mean/log_value) );
+        }
+        System.out.println("Average of all log_values " + (log_coeff/a));
     }
 }
